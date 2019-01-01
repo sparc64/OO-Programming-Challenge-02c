@@ -17,5 +17,60 @@ Interface OrderDispatchInterface
 	 *
 	 * @param Courier $courier - specific courier supplied as dependency injection for flexibility and easy testing.
 	 */
-	public function addConsignment(Courier $courier) :void;
+	public function addConsignment(Courier $courier, ConsignmentData $consignmentData) :void;
+}
+
+
+abstract class OrderDispatchSystem implements OrderDispatchInterface
+{
+	protected $consignmentStorage;
+	protected $batchID;
+
+	public function __construct(Storage $storage)
+	{
+		$this->consignmentStorage = $storage;
+	}
+
+	public function startNewBatch() :void
+	{
+		$this->batchID = $this->generateBatchID();
+	}
+
+	public function endCurrentBatch() :void
+	{
+		// Send consignment numbers to couriers using courier-specific methods
+		$storage = $this->consignmentStorage;
+
+		$couriers = $storage->getBatchConsignmentsGroupedByCourier($this->batchID);
+
+		foreach ($couriers as $courierName => $consignmentList)
+		{
+			$courier = new $courierName;
+
+			$courier->sendConsignments($consignmentList);
+		}
+
+		// Close current batch by generating new Batch ID;
+		$this->batchID = $this->generateBatchID();
+	}
+
+	public function addConsignment(Courier $courier, ConsignmentData $consignmentData) :void
+	{
+		$newConsignmentID = $courier::generateConsignmentID();
+		$courierName = $courier::getCourierName();
+		$currentBatchID = $this->batchID;
+
+		$this->consignmentStorage->save($currentBatchID, $courierName, $newConsignmentID, $consignmentData);
+	}
+
+	protected function generateBatchID() :int
+	{
+		return mt_rand();
+	}
+}
+
+
+class BasicOrderDispatchSystem extends OrderDispatchSystem
+{
+	// All methods inherited from parent class
 }
