@@ -38,17 +38,8 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 
 	public function endCurrentBatch() :void
 	{
-		// Send consignment numbers to couriers using courier-specific methods
-		$storage = $this->consignmentStorage;
-
-		$couriers = $storage->getBatchConsignmentsGroupedByCourier($this->batchID);
-
-		foreach ($couriers as $courierName => $consignmentList)
-		{
-			$courier = new $courierName;
-
-			$courier->sendConsignments($consignmentList);
-		}
+		//
+		$this->sendAllConsignments();
 
 		// Close current batch
 		$this->batchID = null;
@@ -66,6 +57,21 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 	protected function generateBatchID() :int
 	{
 		return mt_rand();
+	}
+
+	/**
+	 * Send consignment numbers to couriers using courier-specific methods
+	 */
+	protected function sendAllConsignments() :void
+	{
+		$couriers = $this->consignmentStorage->getBatchConsignmentsGroupedByCourier($this->batchID);
+
+		foreach ($couriers as $courierName => $consignmentList)
+		{
+			$courier = new $courierName;
+
+			$courier->sendConsignments($consignmentList);
+		}
 	}
 }
 
