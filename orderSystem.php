@@ -48,10 +48,10 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 	public function addConsignment(Courier $courier, ConsignmentData $consignmentData) :void
 	{
 		$newConsignmentID = $courier::generateConsignmentID();
-		$courierID = $courier::getCourierID();
+		$courierName = $courier::getCourierName();
 		$currentBatchID = $this->batchID;
 
-		$this->consignmentStorage->save($currentBatchID, $courierID, $newConsignmentID, $consignmentData);
+		$this->consignmentStorage->save($currentBatchID, $courierName, $newConsignmentID, $consignmentData);
 	}
 
 	protected function generateBatchID() :int
