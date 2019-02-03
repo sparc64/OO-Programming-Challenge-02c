@@ -50,7 +50,7 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 			$courier->sendConsignments($consignmentList);
 		}
 
-		// Close current
+		// Close current batch
 		$this->batchID = null;
 	}
 
