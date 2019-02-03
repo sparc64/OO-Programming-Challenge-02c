@@ -15,10 +15,10 @@ Interface OrderDispatchInterface
 	/**
 	 * Method to add single shipment (consignment) to current batch
 	 *
-	 * @param Courier $courier - specific courier supplied as dependency injection for flexibility and easy testing.
+	 * @param CourierInterface $courier - specific courier supplied as dependency injection for flexibility and easy testing.
 	 * @param array $consignmentData - information about consignment provided by user
 	 */
-	public function addConsignment(Courier $courier, array $consignmentData) :void;
+	public function addConsignment(CourierInterface $courier, array $consignmentData) :void;
 }
 
 
@@ -45,7 +45,7 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 		$this->batchID = null;
 	}
 
-	public function addConsignment(Courier $courier, array $consignmentData) :void
+	public function addConsignment(CourierInterface $courier, array $consignmentData) :void
 	{
 		$newConsignmentID = $courier::generateConsignmentID();
 		$courierName = $courier::getCourierName();
