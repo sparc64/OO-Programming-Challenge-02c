@@ -38,7 +38,6 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 
 	public function endCurrentBatch() :void
 	{
-		//
 		$this->sendAllConsignments();
 
 		// Close current batch
