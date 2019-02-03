@@ -50,8 +50,8 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 			$courier->sendConsignments($consignmentList);
 		}
 
-		// Close current batch by generating new Batch ID;
-		$this->batchID = $this->generateBatchID();
+		// Close current
+		$this->batchID = null;
 	}
 
 	public function addConsignment(Courier $courier, ConsignmentData $consignmentData) :void
