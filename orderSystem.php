@@ -47,11 +47,16 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 
 	public function addConsignment(CourierInterface $courier, array $consignmentData) :void
 	{
-		$newConsignmentID = $courier::generateConsignmentID();
-		$courierName = $courier::getCourierName();
-		$currentBatchID = $this->batchID;
+		// TODO: remove hardcoded field names
+		$data = array(
+			'consignmentID' => $courier::generateConsignmentID(),
+			'batchID' => $this->batchID,
+			'courierName' => $courier::getCourierName()
+		);
 
-		$this->consignmentStorage->save($currentBatchID, $courierName, $newConsignmentID, $consignmentData);
+		$data = array_merge($data, $consignmentData);
+
+		$this->consignmentStorage->save($data);
 	}
 
 	protected function generateBatchID() :int
@@ -64,14 +69,35 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 	 */
 	protected function sendAllConsignments() :void
 	{
-		$couriers = $this->consignmentStorage->getBatchConsignmentsGroupedByCourier($this->batchID);
+		$batchConsignments = $this->consignmentStorage->load(array('batchID' => $this->batchID));
 
-		foreach ($couriers as $courierName => $consignmentList)
+		$consignmentsGroupedByCourier = self::groupConsignmentsByCourier($batchConsignments);
+
+		foreach ($consignmentsGroupedByCourier as $courierName => $consignmentList)
 		{
 			$courier = new $courierName;
 
 			$courier->sendConsignments($consignmentList);
 		}
+	}
+
+	/**
+	 * Method for grouping list of consignments by courier name.
+	 *
+	 * @param array $consignmentsList - raw list of consignments
+	 *
+	 * @return array - consignments grouped by courier ('key' = 'courier name'; 'value' = list of consignments)
+	 */
+	protected static function groupConsignmentsByCourier(array $consignmentsList) :array
+	{
+		$groupedConsignments = array();
+
+		foreach ($consignmentsList as $consignment)
+		{
+			$groupedConsignments[$consignment['courierName']] = $consignment;
+		}
+
+		return $groupedConsignments;
 	}
 }
 
