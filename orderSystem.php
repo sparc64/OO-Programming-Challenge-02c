@@ -1,6 +1,6 @@
 <?php
 
-Interface OrderDispatchInterface
+interface OrderDispatchInterface
 {
 	/**
 	 * Method to start new batch that would form 'dispatch period' (normally at the start of a working day)

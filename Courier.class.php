@@ -1,6 +1,6 @@
 <?php
 
-Interface CourierInterface
+interface CourierInterface
 {
 	/**
 	 * Method for consignment ID generation
