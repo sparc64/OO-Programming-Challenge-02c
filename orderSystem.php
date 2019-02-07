@@ -61,7 +61,7 @@ abstract class OrderDispatchSystem implements OrderDispatchInterface
 
 	protected function generateBatchID() :int
 	{
-		return mt_rand();
+		return uniqid('', true);
 	}
 
 	/**

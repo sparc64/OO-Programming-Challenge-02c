@@ -29,7 +29,7 @@ abstract class Courier implements CourierInterface
 {
 	public static function generateConsignmentID(): string
 	{
-		return mt_rand();
+		return uniqid(self::getCourierName() . '-', true);
 	}
 
 	// Courier name could be used for class init, hence final keyword
